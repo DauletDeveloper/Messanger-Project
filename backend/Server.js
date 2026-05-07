@@ -19,18 +19,18 @@ if (!fs.existsSync(path.dirname(dataPath))) fs.mkdirSync(path.dirname(dataPath),
 if (!fs.existsSync(dataPath)) fs.writeFileSync(dataPath, JSON.stringify([]));
 
 io.on("connection", (socket) => {
-  // 1. При входе отправляем ВСЕ сообщения
+
   const messages = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
   socket.emit("all_messages", messages);
 
   socket.on("add_message", (newMessage) => {
-    // 2. Читаем, ДОБАВЛЯЕМ в массив и только потом пишем
+
     const currentMessages = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
     currentMessages.push(newMessage); 
     
     fs.writeFileSync(dataPath, JSON.stringify(currentMessages, null, 2));
     
-    // 3. Рассылаем новое сообщение ВСЕМ (включая отправителя)
+
     io.emit("message_display", newMessage);
   });
 
@@ -42,7 +42,7 @@ io.on("connection", (socket) => {
     io.emit("message_deleted_success", id);
   });
 
-  // Исправлено: добавлена запятая
+
   socket.on("disconnect", () => console.log("User disconnected:", socket.id));
 });
 
